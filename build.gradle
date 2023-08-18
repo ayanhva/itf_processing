@@ -1,0 +1,156 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.14'
+    id 'java'
+    id "org.sonarqube" version "2.8"
+    id "java-library"
+    id 'jacoco'
+    id 'groovy'
+    id 'checkstyle'
+}
+
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'jacoco'
+apply plugin: 'groovy'
+apply plugin: 'org.sonarqube'
+
+group = 'az.pashabank.dp.ms.digital.card.clearing'
+
+targetCompatibility = 11
+sourceCompatibility = 11
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+checkstyle {
+    toolVersion '8.14'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
+        exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-core'
+    }
+
+    implementation('com.jcraft:jsch:0.1.55')
+
+    implementation('org.springframework:spring-core:5.3.20')
+    implementation('org.springframework:spring-webmvc:5.3.26')
+    implementation('org.springframework:spring-beans:5.3.20')
+
+    implementation('org.springframework.boot:spring-boot-starter-validation')
+
+    implementation 'org.yaml:snakeyaml:1.31'
+
+    //web
+    implementation('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-annotations'
+        exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-core'
+    }
+
+    implementation('org.springframework:spring-beans:5.3.20')
+
+    //tomcat
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.71'
+
+    implementation('javax.servlet:javax.servlet-api:4.0.1')
+
+    // logging
+    implementation('net.logstash.logback:logstash-logback-encoder:6.3') {
+        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+
+    //lombok
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    implementation "io.springfox:springfox-boot-starter:3.0.0"
+
+
+    //guava
+    implementation('com.google.guava:guava:28.1-jre')
+
+    //jackson
+    implementation('com.fasterxml.jackson.core:jackson-databind:2.13.4')
+    implementation('com.fasterxml.jackson:jackson-bom:2.13.2.1')
+    implementation "com.fasterxml.jackson.core:jackson-core:2.13.2"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:2.13.2"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2"
+
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.14'
+    //mapstruct
+    implementation('org.mapstruct:mapstruct-jdk8:1.3.0.Final')
+    annotationProcessor('org.mapstruct:mapstruct-jdk8:1.3.0.Final')
+    annotationProcessor('org.mapstruct:mapstruct-processor:1.3.0.Final')
+
+    // data
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa') {
+        exclude group: 'org.hibernate', module: 'hibernate-core'
+    }
+
+    implementation 'org.apache.commons:commons-pool2:2.11.1'
+
+    // actuator prometheus
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    implementation('com.vladmihalcea:hibernate-types-52:2.19.2')
+
+    implementation('org.hibernate:hibernate-core')
+
+    implementation('org.liquibase:liquibase-core') {
+        exclude group: 'org.apache.ant', module: 'ant'
+    }
+    runtimeOnly('org.postgresql:postgresql')
+
+    //client
+    implementation('org.springframework.cloud:spring-cloud-starter-openfeign:3.1.3') {
+        exclude group: "commons-fileupload", module: "commons-fileupload"
+    }
+    implementation 'commons-fileupload:commons-fileupload:1.5'
+    implementation('io.github.openfeign:feign-httpclient:10.12')
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE')
+
+    // SMB
+    implementation('org.codelibs:jcifs:2.1.32')
+
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
+    implementation('com.google.guava:guava:31.1-jre')
+
+    // csv
+    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.9.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.7.11'
+
+    implementation('io.lettuce:lettuce-core:6.2.4.RELEASE') {
+        exclude group: 'io.netty', module: 'netty-handler'
+    }
+    implementation 'io.netty:netty-handler:4.1.94.Final'
+
+    // queue
+    implementation('org.springframework.boot:spring-boot-starter-amqp')
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+    jvmArgs '--enable-preview'
+}
+
+archivesBaseName = "${project.name}"
+
+jar {
+    enabled = true
+    archiveFileName = "${project.name}-light.jar"
+}

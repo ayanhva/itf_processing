@@ -1,0 +1,26 @@
+server:
+  port: 8443
+  ssl:
+    enabled: false
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: star1234
+  jpa:
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yml
+  cloud:
+    compatibility-verifier:
+      enabled: false
+
+smb:
+  credentials:
+    username: rmd
+    password: rnd
+    input-dir: smb://192.168.111.111/share$/Public/Rauf/Dekabr 2022/
