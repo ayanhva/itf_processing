@@ -16,7 +16,7 @@ public class ItfRecordMapper {
 
     public static final ItfRecordMapper INSTANCE = Mappers.getMapper(ItfRecordMapper.class);
 
-    public ItfRecordEntity toEntity(String row_part_1, String row_part_1_1, String row_part_2, String row_part_2_1, String fileName) {
+    public ItfRecordEntity toEntity(String row_part_1, String row_part_1_1, String row_part_2, String row_part_2_1, String fileName, String folderName, String filePath) {
         // Part 1
         String TRN_CODE = row_part_1.replaceAll("^\\s+", "").substring(0, 2);
         String TRN_CODE_QUALIFIER = row_part_1.replaceAll("^\\s+", "").substring(2, 3);
@@ -147,6 +147,8 @@ public class ItfRecordMapper {
                 .RESERVED_1(RESERVED_1)
                 .REIMBURSEMENT_ATTRIBUTE_1(REIMBURSEMENT_ATTRIBUTE_1)
                 .FILE_NAME(fileName)
+                .FOLDER_NAME(folderName)
+                .FILE_PATH(filePath)
                 .build();
     }
 }

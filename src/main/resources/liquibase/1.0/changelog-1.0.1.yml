@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: add path column
+      author: Ayan Hashimova
+      changes:
+        - addColumn:
+            tableName: itf_records
+            columns:
+              - column:
+                  name: file_path
+                  type: varchar
+              - column:
+                  name: folder_name
+                  type: varchar

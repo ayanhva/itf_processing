@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: Create files table
+      author: Ayan Hashimova
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: files
+      changes:
+        - createTable:
+            tableName: files
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: FILE_NAME
+                  type: varchar
+              - column:
+                  name: FOLDER_NAME
+                  type: varchar
+              - column:
+                  name: FILE_PATH
+                  type: varchar
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+
+            remarks: Table to store information about interchange files

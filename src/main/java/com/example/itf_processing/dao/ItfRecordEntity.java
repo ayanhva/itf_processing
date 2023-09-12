@@ -194,6 +194,12 @@ public class ItfRecordEntity {
     @Column(name = "FILE_NAME")
     private String FILE_NAME;          //operation_cnv_date
 
+    @Column(name = "FILE_PATH")
+    private String FILE_PATH;
+
+    @Column(name = "FOLDER_NAME")
+    private String FOLDER_NAME;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;

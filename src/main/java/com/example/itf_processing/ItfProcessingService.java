@@ -1,8 +1,11 @@
 package com.example.itf_processing;
 
+import com.example.itf_processing.dao.FileEntity;
+import com.example.itf_processing.dao.FileRepository;
 import com.example.itf_processing.dao.ItfRecordEntity;
 import com.example.itf_processing.dao.ItfRecordRepository;
 import com.example.itf_processing.logger.DPLogger;
+import com.example.itf_processing.mapper.FileMapper;
 import com.example.itf_processing.mapper.ItfRecordMapper;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileInputStream;
@@ -26,13 +29,18 @@ public class ItfProcessingService {
 
     private static final DPLogger log = DPLogger.getLogger(ItfProcessingService.class);
     private final FileProcessor fileProcessor;
-    private @Value("${smb.credentials.input-dir}") String exdDir;
+    private @Value("${smb.credentials.input-dir}")
+    String exdDir;
     private final ItfRecordRepository recordRepo;
+    private final FileRepository fileRepo;
 
     @PostConstruct
     public void processItfFiles() {
         try {
             System.out.println(exdDir);
+            var folders = exdDir.split("/");
+            var currentFolder = folders[folders.length-1];
+
             SmbFile[] smbFiles = fileProcessor.getDigitalCardFile(exdDir);
 
             System.out.println(smbFiles.length);
@@ -43,7 +51,8 @@ public class ItfProcessingService {
                     if (file.isFile()) {
                         String fileName = file.getName();
                         System.out.println(fileName);
-                        processFile(file, fileName);
+                        processFile(file, fileName, currentFolder);
+                        fileRepo.save(FileMapper.INSTANCE.toFileEntity(fileName, currentFolder, file.getCanonicalPath()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -55,7 +64,7 @@ public class ItfProcessingService {
         }
     }
 
-    private void processFile(SmbFile file, String fileName) {
+    private void processFile(SmbFile file, String fileName, String folderName) {
         log.info("ActionLog.processFile start.");
         List<String> rows = readItfFile(file);
 
@@ -66,7 +75,8 @@ public class ItfProcessingService {
                 var row_0_part_1_1 = get_part_1_1_text(row);
                 var row_0_part_2 = get_part_2_text(row);
                 var row_0_part_2_1 = get_part_2_1_text(row);
-                ItfRecordEntity record = ItfRecordMapper.INSTANCE.toEntity(row_0_part_1, row_0_part_1_1, row_0_part_2, row_0_part_2_1, fileName);
+                ItfRecordEntity record = ItfRecordMapper.INSTANCE.toEntity(row_0_part_1, row_0_part_1_1, row_0_part_2,
+                        row_0_part_2_1, fileName, folderName, file.getCanonicalPath());
                 records.add(record);
             } catch (Exception e) {
                 System.out.println(row);
@@ -120,7 +130,9 @@ public class ItfProcessingService {
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new SmbFileInputStream(file)))) {
             String line;
+            System.out.println("entered");
             while ((line = br.readLine()) != null) {
+                System.out.println(line);
                 if (flag) {
                     row.append(line).append('\n');
                     flag = false;
